@@ -89,7 +89,7 @@
 #' plot(est_cps)
 McScan <- function(X, y, ncp, thd, method = c("not", "auto", "wbs", "bs"),
                    bnd = max(round(min(2*log(length(X)), length(y)/2)), 5),
-                   standardize = FALSE, post = TRUE, interval) {
+                   standardize = FALSE, post = TRUE, interval, M = NULL) {
   rescale = FALSE
   # Check inputs
   stopifnot(is.matrix(X))
@@ -117,7 +117,9 @@ McScan <- function(X, y, ncp, thd, method = c("not", "auto", "wbs", "bs"),
   }
   # Pre-computation
   if (standardize) { X = sweep(X, 2, sqrt(colSums(X^2)), "/") }
-  M  = X * matrix(as.array(y), nrow = n, ncol = p)
+  if(is.null(M)){
+    M  = X * matrix(as.array(y), nrow = n, ncol = p)
+  }
   if (rescale) {
     M = sweep(M, 2, apply(M, 2, function(x) {mad(diff(x))/sqrt(2)}), "/")
   }
@@ -273,6 +275,7 @@ McScan <- function(X, y, ncp, thd, method = c("not", "auto", "wbs", "bs"),
   }
   attr(ret, "X") = X
   attr(ret, "y") = y
+  attr(ret, "M") = M
   class(ret) = "inferchange.cp"
   return(ret)
 }

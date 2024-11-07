@@ -46,7 +46,10 @@ plot.inferchange.cp <- function(x, ...) {
   y = attr(x, "y")
   n = nrow(X)
   p = ncol(X)
-  Xy =  X * matrix(y, nrow = n, ncol = p)
+  Xy = attr(x, "M")
+  if(is.null(Xy)){
+    Xy =  X * matrix(y, nrow = n, ncol = p)
+  }
   Xy = apply(Xy, 2, cumsum)
   k  = 1:n
   csXy = matrix(sqrt((n - k)/n/k) + sqrt(k/n/(n - k)), nrow = length(k),
